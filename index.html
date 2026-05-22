@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="main">
+        <div class="box" onclick="modeChange('blackjack')">BLACkJACK</div>
+    </div>
+    <div id="blackjack" class="game">
+        <div id="dealer" class="box">카드를 뽑아 시작하세요</div> <br>
+        <div id="player" class="box">카드를 뽑아 시작하세요</div> <br>
+        <div id="bj_draw" class="box" onclick="draw(player)">draw</div>
+        <div id="bj_stop" class="box">stop</div>
+        <div class="box" onclick="reset()">new game</div>
+        <br>
+        <div class="box" onclick="modeChange('main')">초기 화면으로</div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
