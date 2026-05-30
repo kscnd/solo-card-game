@@ -2,6 +2,7 @@ const numList = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K
 const suitList = ["♠", "♦", "♥", "♣"];
 let cardList = [];
 let player = [];
+let sumP = 0;
 let dealer = [];
 let mode = "main";
 let state = "ready";
@@ -18,6 +19,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     dealer = [];
     cardList = [];
     state = "ready";
+    sumP = 0;
     document.getElementById("dealer").innerText = "카드를 뽑아 시작하세요";
     document.getElementById("player").innerText = "카드를 뽑아 시작하세요";
     document.getElementById("textbox").innerText = "";
@@ -60,12 +62,10 @@ function blackjack(object) {
             textbox.innerText = "BLACKJACK!";
             state = "ended";
         }
-        return [num, sum];
+        sumP = sum;
     } else {
         if (sum < 17) draw(dealer);
         else if (sum <= 21) {
-            let sumP = object.map((n) => numChange(n));
-            sumP = sumP.reduce((n, m) => n + m)
             if (sum > sumP) textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
             else if (sum === sumP) textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
             else textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
@@ -75,6 +75,7 @@ function blackjack(object) {
             state = "ended";
         }
     }
+    return [num, sum];
 }
 function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
     switch (mode) {
