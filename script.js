@@ -42,28 +42,32 @@ function draw(object) {
 function blackjack(object) {
     document.getElementById("dealer").innerText = dealer;
     document.getElementById("player").innerText = player;
-    let sum = 0;
-    object.forEach((n) => sum += numChange(n));
+    let sum = [];
+    sum = object.map((n) => numChange(n));
+    while (Math.max(...sum) === 11 && sum.reduce((n, m) => n + m) > 21) sum[sum.indexOf(11)] = 1;
     if (object === player) {
-        if (sum > 21) {
+        if (sum.reduce((n, m) => n + m) > 21) {
             document.getElementById("dealer").innerText = "버스트! 딜러가 승리하였습니다";
             state = "ended";
-        } else if(sum === 21) {
+        } else if(sum.reduce((n, m) => n + m) === 21) {
             document.getElementById("dealer").innerText = "BLACKJACK!";
             state = "ended";
         }
         return sum;
     }   
 }
-function numChange(n) { //로마자 카드 숫자로 바꾸는 것. 추후에 A를 경우에 따라 1 또는 14로 바꾸는 기능 만들어야 함
-    switch (n[0]) {
-        case "A":
-            return 11;
-        case "J":
-        case "Q":
-        case "K":
-            return 10;
-        default:
-            return Number(n.replace(n[n.length - 1], ''));
+function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
+    switch (mode) {
+        case "blackjack":
+            switch (n[0]) {
+                case "A":
+                    return 11;
+                case "J":
+                case "Q":
+                case "K":
+                    return 10;
+                default:
+                    return Number(n.replace(n[n.length - 1], '')); //10의 경우 n[0] 하면 1로 출력되기에
+            }
     }
 }
