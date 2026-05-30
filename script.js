@@ -20,6 +20,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     state = "ready";
     document.getElementById("dealer").innerText = "카드를 뽑아 시작하세요";
     document.getElementById("player").innerText = "카드를 뽑아 시작하세요";
+    document.getElementById("textbox").innerText = "";
 }
 
 function draw(object) {
@@ -42,19 +43,38 @@ function draw(object) {
 function blackjack(object) {
     document.getElementById("dealer").innerText = dealer;
     document.getElementById("player").innerText = player;
-    let sum = [];
-    sum = object.map((n) => numChange(n));
-    while (Math.max(...sum) === 11 && sum.reduce((n, m) => n + m) > 21) sum[sum.indexOf(11)] = 1;
+    const textbox = document.getElementById("textbox")
+    let num = [];
+    let sum = 0;
+    num = object.map((n) => numChange(n));
+    sum = num.reduce((n, m) => n + m);
+    while (Math.max(...num) === 11 && sum > 21) {
+        num[num.indexOf(11)] = 1;
+        sum -= 10;
+    }
     if (object === player) {
-        if (sum.reduce((n, m) => n + m) > 21) {
-            document.getElementById("dealer").innerText = "버스트! 딜러가 승리하였습니다";
+        if (sum > 21) {
+            textbox.innerText = "버스트! 딜러가 승리하였습니다";
             state = "ended";
-        } else if(sum.reduce((n, m) => n + m) === 21) {
-            document.getElementById("dealer").innerText = "BLACKJACK!";
+        } else if(sum === 21) {
+            textbox.innerText = "BLACKJACK!";
             state = "ended";
         }
-        return sum;
-    }   
+        return [num, sum];
+    } else {
+        if (sum < 17) draw(dealer);
+        else if (sum <= 21) {
+            let sumP = object.map((n) => numChange(n));
+            sumP = sumP.reduce((n, m) => n + m)
+            if (sum > sumP) textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
+            else if (sum === sumP) textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
+            else textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
+            state = "ended";
+        } else {
+            textbox.innerText = "딜러 버스트! 승리하였습니다";
+            state = "ended";
+        }
+    }
 }
 function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
     switch (mode) {
