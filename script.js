@@ -20,9 +20,27 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     cardList = [];
     state = "ready";
     sumP = 0;
+
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
     document.getElementById("textbox").innerText = "카드를 뽑아 시작하세요";
+
+    document.getElementById("newgame").style.display = "none";
+    switch (mode) {
+        case "blackjack":
+            document.getElementById("bj_draw").style.display = "inline-block";
+            document.getElementById("bj_stop").style.display = "inline-block";
+    }
+}
+
+function end() {
+    switch (mode) {
+        case "blackjack":
+            document.getElementById("bj_draw").style.display = "none";
+            document.getElementById("bj_stop").style.display = "none";
+    }
+    document.getElementById("newgame").style.display = "inline-block";
+    state = "ended";
 }
 
 function draw(array) {
@@ -66,10 +84,10 @@ function blackjack(array, arrayName, card) {
     if (array === player) {
         if (sum > 21) {
             textbox.innerText = "버스트! 딜러가 승리하였습니다";
-            state = "ended";
+            end();
         } else if(sum === 21) {
             textbox.innerText = "BLACKJACK!";
-            state = "ended";
+            end();
         }
         sumP = sum;
     } else {
@@ -78,10 +96,10 @@ function blackjack(array, arrayName, card) {
             if (sum > sumP) textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
             else if (sum === sumP) textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
             else textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
-            state = "ended";
+            end();
         } else {
             textbox.innerText = "딜러 버스트! 승리하였습니다";
-            state = "ended";
+            end();
         }
     }
     return [num, sum];

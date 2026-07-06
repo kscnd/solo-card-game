@@ -8,18 +8,20 @@
 </head>
 <body>
     <div id="main">
-        <div class="box" onclick="modeChange('blackjack')">BLACKJACK</div>
+        <div class="button" onclick="modeChange('blackjack')">BLACKJACK</div>
     </div>
     <div id="blackjack" class="game">
+        <div class="button" onclick="modeChange('bj_guide')">플레이 방법</div>
+        <div class="button" onclick="modeChange('main')">초기 화면으로</div> <br>
         <div id="dealer" class="cardbox"></div> <br>
         <div id="textbox" class="box">카드를 뽑아 시작하세요</div> <br>
         <div id="player" class="cardbox"></div> <br>
-        <div id="bj_draw" class="box" onclick="draw(player)">hit</div>
-        <div id="bj_stop" class="box" onclick="draw(dealer)">stay</div>
-        <div class="box" onclick="reset()">new game</div>
+        <div id="bj_draw" class="button" onclick="draw(player)">hit</div>
+        <div id="bj_stop" class="button" onclick="draw(dealer)">stay</div>
+        <div id="newgame" class="button" onclick="reset()">new game</div>
         <br>
-        <div class="box" onclick="modeChange('bj_guide')">플레이 방법</div>
-        <div class="box" onclick="modeChange('main')">초기 화면으로</div>
+        <div class="space"></div>
+
     </div>
     <div id="bj_guide" class="guide">
         <h1>블랙잭 가이드</h1>
@@ -29,11 +31,11 @@
             점수는 카드에 있는 숫자를 합해서 계산합니다. 이때 J, Q, K는 10에 해당하며, A는 1 혹은 11 어느 쪽으로도 계산할 수 있습니다.<br>
         </p>
         <h2>버튼별 설명</h2>
-        <div class="box">hit</div>
+        <div class="button">hit</div>
         <p>카드를 받는 버튼입니다. 21 미만인 동안 원하는 만큼 받을 수 있습니다.</p>
-        <div class="box">stay</div>
+        <div class="button">stay</div>
         <p>카드 받기를 멈추고 딜러에게 차례를 넘기는 버튼입니다.</p>
-        <div class="box">new game</div>
+        <div class="button">new game</div>
         <p>게임을 다시 시작하기 위해 초기화하는 버튼입니다.</p>
         <h2>게임의 종료</h2>
         <p>
@@ -52,7 +54,7 @@
             실제로 블랙잭이라 부르는 범위는 더 좁지만, 편의상 정확히 21에 도달했을 때를 블랙잭이라 했습니다.<br>
             카드를 뽑다가 21을 초과하는 경우를 버스트라 부릅니다.
         </p>
-        <div class="box" onclick="modeChange('blackjack')">돌아가기</div>
+        <div class="button" onclick="modeChange('blackjack')">돌아가기</div>
     </div>
     <script src="script.js"></script>
 </body>
