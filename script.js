@@ -44,7 +44,15 @@ function draw(array) {
 }
 
 function blackjack(array, arrayName, card) {
-    document.getElementById(arrayName).innerText += card;
+    switch (card[card.length - 1]) {
+        case "♦":
+        case "♥":
+            document.getElementById(arrayName).innerHTML += `<div class="card" style="color: red">${card}</div>`;
+            break;
+        default:
+            document.getElementById(arrayName).innerHTML += `<div class="card">${card}</div>`
+            break;
+    }
     const textbox = document.getElementById("textbox")
     textbox.innerText = "";
     let num = [];
