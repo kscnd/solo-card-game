@@ -20,12 +20,12 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     cardList = [];
     state = "ready";
     sumP = 0;
-    document.getElementById("dealer").innerText = "카드를 뽑아 시작하세요";
-    document.getElementById("player").innerText = "카드를 뽑아 시작하세요";
-    document.getElementById("textbox").innerText = "";
+    document.getElementById("dealer").innerText = "";
+    document.getElementById("player").innerText = "";
+    document.getElementById("textbox").innerText = "카드를 뽑아 시작하세요";
 }
 
-function draw(object) {
+function draw(array) {
     if (state === "ended") return;
     let n = Math.floor(Math.random() * 13);
     let m = Math.floor(Math.random() * 4);
@@ -33,28 +33,29 @@ function draw(object) {
         n = Math.floor(Math.random() * 13);
         m = Math.floor(Math.random() * 4);
     }
-    object.push(numList[n] + suitList[m]);
+    array.push(numList[n] + suitList[m]);
     cardList.push(numList[n] + suitList[m]);
     switch (mode) {
         case "blackjack":
-            blackjack(object);
+            if (player[0] === array[0]) blackjack(array, "player", numList[n] + suitList[m]);
+            else blackjack(array, "dealer", numList[n] + suitList[m]);
             break;
     }
 }
 
-function blackjack(object) {
-    document.getElementById("dealer").innerText = dealer;
-    document.getElementById("player").innerText = player;
+function blackjack(array, arrayName, card) {
+    document.getElementById(arrayName).innerText += card;
     const textbox = document.getElementById("textbox")
+    textbox.innerText = "";
     let num = [];
     let sum = 0;
-    num = object.map((n) => numChange(n));
+    num = array.map((n) => numChange(n));
     sum = num.reduce((n, m) => n + m);
     while (Math.max(...num) === 11 && sum > 21) {
         num[num.indexOf(11)] = 1;
         sum -= 10;
     }
-    if (object === player) {
+    if (array === player) {
         if (sum > 21) {
             textbox.innerText = "버스트! 딜러가 승리하였습니다";
             state = "ended";
@@ -83,12 +84,13 @@ function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
             switch (n[0]) {
                 case "A":
                     return 11;
+                case "1":
                 case "J":
                 case "Q":
                 case "K":
                     return 10;
                 default:
-                    return Number(n.replace(n[n.length - 1], '')); //10의 경우 n[0] 하면 1로 출력되기에
+                    return Number(n[0]);
             }
     }
 }
