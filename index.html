@@ -7,14 +7,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="addedPoint" class="smallbox">추가한 포인트: 0</div>
+    <div id="currentPoint" class="smallbox">현재 포인트: 0</div>
     <div id="main">
-        <div class="button" onclick="modeChange('blackjack')">BLACKJACK</div>
+        <div class="button" onclick="modeChange('blackjack')">BLACKJACK</div> <br>
+        <p>
+            혼자 하는 여러가지 카드 게임 사이트이며 개발중입니다.<br>
+            위 게임들에 대한 설명은 각 게임 내에 있습니다.<br>
+            아래에서 포인트를 받아 베팅을 할 수 있습니다.<br>
+            개발 중이라 베팅과 같은 특정 기능이 없을 수 있습니다.<br>
+        </p>
+        <input id="pointToAdd" class="smallbox" type="number"> <br>
+        <div class="button" onclick="addPoint(pointToAdd.value)">포인트 추가</div> <br>
+        <div id="point_textbox" class="box"></div>
     </div>
+
+
     <div id="blackjack" class="game">
         <div class="button" onclick="modeChange('bj_guide')">플레이 방법</div>
         <div class="button" onclick="modeChange('main')">초기 화면으로</div> <br>
         <div id="dealer" class="cardbox"></div> <br>
-        <div id="textbox" class="box">카드를 뽑아 시작하세요</div> <br>
+        <div id="bj_textbox" class="box">카드를 뽑아 시작하세요</div> <br>
         <div id="player" class="cardbox"></div> <br>
         <div id="bj_draw" class="button" onclick="draw(player)">hit</div>
         <div id="bj_stop" class="button" onclick="draw(dealer)">stay</div>
@@ -23,6 +36,7 @@
         <div class="space"></div>
 
     </div>
+
     <div id="bj_guide" class="guide">
         <h1>블랙잭 가이드</h1>
         <p>

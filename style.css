@@ -8,6 +8,13 @@
     margin-top:30px;
     display:inline-block;
 }
+.smallbox {
+    font-size:12px;
+    padding:5px;
+    border:solid;
+    border-width:1px;
+    display:inline-block;
+}
 .cardbox {
     text-align:center;
     padding:10px;

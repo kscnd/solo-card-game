@@ -6,7 +6,8 @@ let sumP = 0;
 let dealer = [];
 let mode = "main";
 let state = "ready";
-const game = document.getElementsByClassName("game");
+
+addPoint(0);
 
 function modeChange(input) {
     document.getElementById(mode).style.display = "none";
@@ -23,7 +24,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
-    document.getElementById("textbox").innerText = "카드를 뽑아 시작하세요";
+    document.getElementById("bj_textbox").innerText = "카드를 뽑아 시작하세요";
 
     document.getElementById("newgame").style.display = "none";
     switch (mode) {
@@ -61,6 +62,32 @@ function draw(array) {
     }
 }
 
+function addPoint(point) {
+    point = Number(point);
+    if (point < 0) {
+        document.getElementById("point_textbox").innerText = "양수 값을 입력해 주세요";
+        return "음수임"
+    }
+    if (point % 1) {
+        document.getElementById("point_textbox").innerText = "정수를 입력해 주세요";
+        return "정수 아님";
+    } //예외사항. addPoint(0)은 페이지 세팅에 쓸거임.
+
+    if (localStorage.addedPoint === undefined) {
+        localStorage.setItem("addedPoint", point);
+    } else {
+        localStorage.addedPoint = Number(localStorage.addedPoint) + point;
+    }
+    if (localStorage.currentPoint === undefined) {
+        localStorage.setItem("currentPoint", point);
+    } else {
+        localStorage.currentPoint = Number(localStorage.currentPoint) + point;
+    } //localStorage에 변경사항 저장
+
+    document.getElementById("addedPoint").innerText = `추가한 포인트: ${localStorage.addedPoint}`;
+    document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
+}
+
 function blackjack(array, arrayName, card) {
     switch (card[card.length - 1]) {
         case "♦":
@@ -71,8 +98,8 @@ function blackjack(array, arrayName, card) {
             document.getElementById(arrayName).innerHTML += `<div class="card">${card}</div>`
             break;
     }
-    const textbox = document.getElementById("textbox")
-    textbox.innerText = "";
+    const bj_textbox = document.getElementById("bj_textbox")
+    bj_textbox.innerText = "";
     let num = [];
     let sum = 0;
     num = array.map((n) => numChange(n));
@@ -83,27 +110,28 @@ function blackjack(array, arrayName, card) {
     }
     if (array === player) {
         if (sum > 21) {
-            textbox.innerText = "버스트! 딜러가 승리하였습니다";
+            bj_textbox.innerText = "버스트! 딜러가 승리하였습니다";
             end();
         } else if(sum === 21) {
-            textbox.innerText = "BLACKJACK!";
+            bj_textbox.innerText = "BLACKJACK!";
             end();
         }
         sumP = sum;
     } else {
         if (sum < 17) draw(dealer);
         else if (sum <= 21) {
-            if (sum > sumP) textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
-            else if (sum === sumP) textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
-            else textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
+            if (sum > sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
+            else if (sum === sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
+            else bj_textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
             end();
         } else {
-            textbox.innerText = "딜러 버스트! 승리하였습니다";
+            bj_textbox.innerText = "딜러 버스트! 승리하였습니다";
             end();
         }
     }
     return [num, sum];
 }
+
 function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
     switch (mode) {
         case "blackjack":
