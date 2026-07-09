@@ -29,6 +29,9 @@
         <div id="dealer" class="cardbox"></div> <br>
         <div id="bj_textbox" class="box">카드를 뽑아 시작하세요</div> <br>
         <div id="player" class="cardbox"></div> <br>
+
+        <input id="bj_bet" class="smallbox" type="number"> <br>
+        <div id="bet" class="button" onclick="bet(bj_bet.value)">게임 시작</div>
         <div id="bj_draw" class="button" onclick="draw(player)">hit</div>
         <div id="bj_stop" class="button" onclick="draw(dealer)">stay</div>
         <div id="newgame" class="button" onclick="reset()">new game</div>
@@ -59,14 +62,18 @@
             stay를 한 경우에는<br>
             딜러의 점수가 21을 초과하거나 플레이어의 점수가 더 높으면 플레이어가 승리하고<br>
             점수가 같으면 무승부가 되며<br>
-            그렇지 않으면 딜러가 승리합니다.<br>
+            그렇지 않으면 딜러가 승리합니다.
+        </p> <p>
+            이기면 베팅한 포인트만큼을 추가로 얻으며 <br>
+            무승부면 포인트를 돌려받고 <br>
+            패배하면 포인트를 잃습니다.
         </p>
         <h2>기타</h2>
         <p>
             딜러는 예외 없이 16 이하일 때 카드를 뽑고 17 이상일 때 멈춥니다.<br>
             A가 11로 계산된 상황에서 17 이상 21 이하일 경우에도 멈춥니다.<br>
-            실제로 블랙잭이라 부르는 범위는 더 좁지만, 편의상 정확히 21에 도달했을 때를 블랙잭이라 했습니다.<br>
-            카드를 뽑다가 21을 초과하는 경우를 버스트라 부릅니다.
+            카드를 뽑다가 21을 초과하는 경우를 버스트라 부릅니다.<br>
+            첫 두장으로 21에 도달한 경우를 블랙잭이라 부르며 베팅한 포인트의 1.5배를 얻습니다.
         </p>
         <div class="button" onclick="modeChange('blackjack')">돌아가기</div>
     </div>

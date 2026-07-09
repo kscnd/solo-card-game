@@ -6,6 +6,7 @@ let sumP = 0;
 let dealer = [];
 let mode = "main";
 let state = "ready";
+let betPoint = 0;
 
 addPoint(0);
 
@@ -24,13 +25,15 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
-    document.getElementById("bj_textbox").innerText = "카드를 뽑아 시작하세요";
+    document.getElementById("bj_textbox").innerText = "베팅할 금액을 입력하세요";
 
+    document.getElementById("bet").style.display = "inline-block";
     document.getElementById("newgame").style.display = "none";
     switch (mode) {
         case "blackjack":
-            document.getElementById("bj_draw").style.display = "inline-block";
-            document.getElementById("bj_stop").style.display = "inline-block";
+            document.getElementById("bj_bet").style.display = "inline-block";
+            document.getElementById("bj_draw").style.display = "none";
+            document.getElementById("bj_stop").style.display = "none";
     }
 }
 
@@ -42,6 +45,36 @@ function end() {
     }
     document.getElementById("newgame").style.display = "inline-block";
     state = "ended";
+}
+
+function bet(point) {
+    betPoint = point;
+    if (localStorage.currentPoint < point) {
+        document.getElementById("bj_textbox").innerText = "포인트가 부족합니다";
+        return "포인트 부족"
+    }
+    if (point % 1) {
+        document.getElementById("bj_textbox").innerText = "정수를 입력해 주세요";
+        return "정수 아님";
+    }
+    if (point < 1) {
+        document.getElementById("bj_textbox").innerText = "양수 값을 입력해 주세요";
+        return "음수임"
+    }// 예외사항 
+    document.getElementById("bet").style.display = "none";
+    switch (mode) {
+        case "blackjack":
+            document.getElementById("bj_draw").style.display = "inline-block";
+            document.getElementById("bj_stop").style.display = "inline-block";
+            document.getElementById("bj_bet").style.display = "none";
+            document.getElementById("bj_textbox").innerText = `베팅액: ${point}`
+            draw(player);
+            draw(player);
+            if (state === "ended") {
+                bj_textbox.innerText = `BLACKJACK\n${Math.ceil(betPoint * 1.5)}를 추가로 얻었습니다`;
+            }
+    }
+    
 }
 
 function draw(array) {
@@ -99,7 +132,6 @@ function blackjack(array, arrayName, card) {
             break;
     }
     const bj_textbox = document.getElementById("bj_textbox")
-    bj_textbox.innerText = "";
     let num = [];
     let sum = 0;
     num = array.map((n) => numChange(n));
@@ -110,22 +142,22 @@ function blackjack(array, arrayName, card) {
     }
     if (array === player) {
         if (sum > 21) {
-            bj_textbox.innerText = "버스트! 딜러가 승리하였습니다";
+            bj_textbox.innerText = `버스트! 베팅액을 잃습니다`;
             end();
         } else if(sum === 21) {
-            bj_textbox.innerText = "BLACKJACK!";
+            bj_textbox.innerText = `21점에 도달해 승리했습니다!\n${betPoint}를 추가로 얻었습니다`;
             end();
         }
         sumP = sum;
     } else {
         if (sum < 17) draw(dealer);
         else if (sum <= 21) {
-            if (sum > sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다`;
-            else if (sum === sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다`;
-            else bj_textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다`;
+            if (sum > sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다\n베팅액을 잃습니다`;
+            else if (sum === sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다\n베팅액을 돌려받습니다.`;
+            else bj_textbox.innerText = `${sum} : ${sumP}으로 승리하였습니다\n${betPoint}포인트를 추가로 얻었습니다`;
             end();
         } else {
-            bj_textbox.innerText = "딜러 버스트! 승리하였습니다";
+            bj_textbox.innerText = `딜러 버스트! 승리하였습니다\n${betPoint}포인트를 추가로 얻습니다`;
             end();
         }
     }
