@@ -25,7 +25,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
-    document.getElementById("bj_textbox").innerText = "베팅할 금액을 입력하세요";
+    document.getElementById("bj_textbox").innerText = "베팅할 포인트를 입력하세요";
 
     document.getElementById("bet").style.display = "inline-block";
     document.getElementById("newgame").style.display = "none";
@@ -69,11 +69,11 @@ function bet(point) {
             document.getElementById("bj_draw").style.display = "inline-block";
             document.getElementById("bj_stop").style.display = "inline-block";
             document.getElementById("bj_bet").style.display = "none";
-            document.getElementById("bj_textbox").innerText = `베팅액: ${betPoint}`
+            document.getElementById("bj_textbox").innerText = `베팅한 포인트: ${betPoint}`
             draw(player);
             draw(player);
             if (state === "ended") {
-                bj_textbox.innerText = `BLACKJACK\n${Math.ceil(betPoint * 1.5)}를 추가로 얻습니다`;
+                bj_textbox.innerText = `BLACKJACK\n${Math.ceil(betPoint * 1.5)}포인트를 추가로 얻습니다`;
                 localStorage.currentPoint = Number(localStorage.currentPoint) + Math.ceil(betPoint * 2.5);
                 document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
             }
@@ -146,10 +146,10 @@ function blackjack(array, arrayName, card) {
     }
     if (array === player) {
         if (sum > 21) {
-            bj_textbox.innerText = `버스트! 베팅액을 잃습니다`;
+            bj_textbox.innerText = `버스트! 포인트를 잃습니다`;
             end();
         } else if(sum === 21) {
-            bj_textbox.innerText = `21점에 도달해 승리했습니다!\n${betPoint}를 추가로 얻습니다`;
+            bj_textbox.innerText = `21점에 도달해 승리했습니다!\n${betPoint}포인트를 추가로 얻습니다`;
             localStorage.currentPoint = Number(localStorage.currentPoint) + betPoint * 2;
             document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
             end();
@@ -158,9 +158,9 @@ function blackjack(array, arrayName, card) {
     } else {
         if (sum < 17) draw(dealer);
         else if (sum <= 21) {
-            if (sum > sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다\n베팅액을 잃습니다`;
+            if (sum > sumP) bj_textbox.innerText = `${sum} : ${sumP}으로 딜러가 승리하였습니다\n포인트를 잃습니다`;
             else if (sum === sumP) {
-                bj_textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다\n베팅액을 돌려받습니다.`;
+                bj_textbox.innerText = `${sum} : ${sumP}으로 무승부 처리되었습니다\n포인트를 돌려받습니다.`;
                 localStorage.currentPoint = Number(localStorage.currentPoint) + betPoint;
                 document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
             }
