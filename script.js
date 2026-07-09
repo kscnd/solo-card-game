@@ -123,6 +123,9 @@ function addPoint(point) {
 
     document.getElementById("addedPoint").innerText = `추가한 포인트: ${localStorage.addedPoint}`;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
+    if (point > 0) {
+    document.getElementById("point_textbox").innerText = `${point}포인트가 정상적으로 추가되었습니다`;
+    }
 }
 
 function blackjack(array, arrayName, card) {
