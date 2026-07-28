@@ -1,6 +1,9 @@
-const numList = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-const suitList = ["♠", "♦", "♥", "♣"];
-let cardList = [];
+const list = ["A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9♠", "10♠", "J♠", "Q♠", "K♠", 
+            "A♦", "2♦", "3♦", "4♦", "5♦", "6♦", "7♦", "8♦", "9♦", "10♦", "J♦", "Q♦", "K♦", 
+            "A♥", "2♥", "3♥", "4♥", "5♥", "6♥", "7♥", "8♥", "9♥", "10♥", "J♥", "Q♥", "K♥", 
+            "A♣", "2♣", "3♣", "4♣", "5♣", "6♣", "7♣", "8♣", "9♣", "10♣", "J♣", "Q♣", "K♣"];
+let cardList = [...list];
+let discards = [];
 let player = [];
 let sumP = 0;
 let dealer = [];
@@ -19,7 +22,8 @@ function modeChange(input) {
 function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     player = [];
     dealer = [];
-    cardList = [];
+    cardList = [...list];
+    discards = [];
     state = "ready";
     sumP = 0;
 
@@ -74,7 +78,8 @@ function bet(point) {
             draw(player);
             if (state === "ended") {
                 bj_textbox.innerText = `BLACKJACK\n${Math.ceil(betPoint * 1.5)}포인트를 추가로 얻습니다`;
-                localStorage.currentPoint = Number(localStorage.currentPoint) + Math.ceil(betPoint * 2.5);
+                localStorage.currentPoint = Number(localStorage.currentPoint) + Math.ceil(betPoint / 2);
+                //이미 betPoint * 2를 얻었기 때문에 0.5배만 얻음
                 document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
             }
     }
@@ -83,18 +88,18 @@ function bet(point) {
 
 function draw(array) {
     if (state === "ended") return;
-    let n = Math.floor(Math.random() * 13);
-    let m = Math.floor(Math.random() * 4);
-    while (cardList.indexOf(numList[n] + suitList[m]) !== -1) { //무한반복 방지할 것 만들어야 함
-        n = Math.floor(Math.random() * 13);
-        m = Math.floor(Math.random() * 4);
+    if (cardList.length === 0) {
+        cardList = [...discards];
+        discards = [];
     }
-    array.push(numList[n] + suitList[m]);
-    cardList.push(numList[n] + suitList[m]);
+    let n = Math.floor(Math.random() * cardList.length);
+    array.push(cardList[n]);
+    cardList.splice(n, 1);
+
     switch (mode) {
         case "blackjack":
-            if (player[0] === array[0]) blackjack(array, "player", numList[n] + suitList[m]);
-            else blackjack(array, "dealer", numList[n] + suitList[m]);
+            if (player[0] === array[0]) blackjack(array, "player", array[array.length - 1]);
+            else blackjack(array, "dealer", array[array.length - 1]);
             break;
     }
 }
