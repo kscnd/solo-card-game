@@ -29,15 +29,21 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
-    document.getElementById("bj_textbox").innerText = "베팅할 포인트를 입력하세요";
-
-    document.getElementById("bet").style.display = "inline-block";
-    document.getElementById("newgame").style.display = "none";
+    
     switch (mode) {
         case "blackjack":
+            document.getElementById("bj_textbox").innerText = "베팅할 포인트를 입력하세요";
+            document.getElementById("bj_betpoint").style.display = "inline-block";
             document.getElementById("bj_bet").style.display = "inline-block";
             document.getElementById("bj_draw").style.display = "none";
             document.getElementById("bj_stop").style.display = "none";
+            document.getElementById("bj_newgame").style.display = "none";
+        case "onecard":
+            document.getElementById("oc_textbox").innerText = "플레이 방법을 꼭 읽어주세요!";
+            document.getElementById("oc_betpoint").style.display = "inline-block";
+            document.getElementById("oc_bet").style.display = "inline-block";
+            document.getElementById("oc_draw").style.display = "none";
+            document.getElementById("oc_newgame").style.display = "none";
     }
 }
 
@@ -46,8 +52,11 @@ function end() {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "none";
             document.getElementById("bj_stop").style.display = "none";
+            document.getElementById("bj_newgame").style.display = "inline-block";
+        case "onecard":
+            document.getElementById("oc_draw").style.display = "none";
+            document.getElementById("oc_newgame").style.display = "inline-block";
     }
-    document.getElementById("newgame").style.display = "inline-block";
     state = "ended";
 }
 
@@ -61,18 +70,19 @@ function bet(point) {
         document.getElementById("bj_textbox").innerText = "정수를 입력해 주세요";
         return "정수 아님";
     }
-    if (betPoint < 1) {
+    if (!(betPoint >= 1)) {
         document.getElementById("bj_textbox").innerText = "양수 값을 입력해 주세요";
         return "음수임"
     }// 예외사항 
     localStorage.currentPoint = Number(localStorage.currentPoint) - betPoint;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
-    document.getElementById("bet").style.display = "none";
+
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "inline-block";
             document.getElementById("bj_stop").style.display = "inline-block";
             document.getElementById("bj_bet").style.display = "none";
+            document.getElementById("bj_betpoint").style.display = "none";
             document.getElementById("bj_textbox").innerText = `베팅한 포인트: ${betPoint}`
             draw(player);
             draw(player);
@@ -152,7 +162,7 @@ function blackjack(array, arrayName, card) {
         num[num.indexOf(11)] = 1;
         sum -= 10;
     }
-    if (array === player) {
+    if (arrayName === "player") {
         if (sum > 21) {
             bj_textbox.innerText = `버스트! 포인트를 잃습니다`;
             end();

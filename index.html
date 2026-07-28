@@ -11,6 +11,7 @@
     <div id="currentPoint" class="smallbox">현재 포인트: 0</div>
     <div id="main">
         <div class="button" onclick="modeChange('blackjack')">BLACKJACK</div> <br>
+        <div class="button" onclick="modeChange('onecard')">ONE-CARD</div> <br>
         <p>
             혼자 하는 여러가지 카드 게임 사이트이며 개발중입니다.<br>
             위 게임들에 대한 설명은 각 게임 내에 있습니다.<br>
@@ -27,16 +28,15 @@
         <div class="button" onclick="modeChange('bj_guide')">플레이 방법</div>
         <div class="button" onclick="modeChange('main')">초기 화면으로</div> <br>
         <div id="dealer" class="cardbox"></div> <br>
-        <div id="bj_textbox" class="box">카드를 뽑아 시작하세요</div> <br>
+        <div id="bj_textbox" class="box"></div> <br>
         <div id="player" class="cardbox"></div> <br>
 
-        <input id="bj_bet" class="smallbox" type="number"> <br>
-        <div id="bet" class="button" onclick="bet(bj_bet.value)">게임 시작</div>
+        <input id="bj_betpoint" class="smallbox" type="number"> <br>
+        <div id="bj_bet" class="button" onclick="bet(bj_betpoint.value)">게임 시작</div>
         <div id="bj_draw" class="button" onclick="draw(player)">hit</div>
         <div id="bj_stop" class="button" onclick="draw(dealer)">stay</div>
-        <div id="newgame" class="button" onclick="reset()">new game</div>
+        <div id="bj_newgame" class="button" onclick="reset()">new game</div>
         <br>
-        <div class="space"></div>
 
     </div>
 
@@ -76,6 +76,35 @@
             첫 두장으로 21에 도달한 경우를 블랙잭이라 부르며 베팅한 포인트의 1.5배를 얻습니다.
         </p>
         <div class="button" onclick="modeChange('blackjack')">돌아가기</div>
+    </div>
+
+    <div id="onecard" class="game">
+        <div class="button" onclick="modeChange('oc_guide')">플레이 방법</div>
+        <div class="button" onclick="modeChange('main')">초기 화면으로</div> <br>
+        <div id="oc_dealer" class="cardbox"></div> <br>
+        <div id="oc_textbox" class="box"></div> <br>
+        <div id="oc_player" class="cardbox"></div> <br>
+
+        <input id="oc_betpoint" class="smallbox" type="number"> <br>
+        <div id="oc_bet" class="button" onclick="bet(0)">게임 시작</div>
+        <div id="oc_draw" class="button" onclick="draw(player)">draw</div>
+        <div id="oc_newgame" class="button" onclick="reset()">new game</div>
+        <br>
+    </div>
+
+    <div id="oc_guide" class="guide">
+        <h1>원카드 가이드</h1>
+        <p>이 모드는 아직 완성되지 않았으며, 가이드 또한 마찬가지입니다!</p>
+        <h2>버튼별 설명</h2>
+        <div class="button">draw</div>
+        <p>카드를 받는 버튼입니다.</p>
+        <div class="button">new game</div>
+        <p>게임을 다시 시작하기 위해 초기화하는 버튼입니다.</p>
+        <h2>게임의 종료</h2>
+        <p></p>
+        <h2>기타</h2>
+        <p></p>
+        <div class="button" onclick="modeChange('onecard')">돌아가기</div>
     </div>
     <script src="script.js"></script>
 </body>
