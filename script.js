@@ -2,14 +2,14 @@ const list = ["A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9
             "A♦", "2♦", "3♦", "4♦", "5♦", "6♦", "7♦", "8♦", "9♦", "10♦", "J♦", "Q♦", "K♦", 
             "A♥", "2♥", "3♥", "4♥", "5♥", "6♥", "7♥", "8♥", "9♥", "10♥", "J♥", "Q♥", "K♥", 
             "A♣", "2♣", "3♣", "4♣", "5♣", "6♣", "7♣", "8♣", "9♣", "10♣", "J♣", "Q♣", "K♣"];
-let cardList = [...list];
-let discards = [];
-let player = [];
-let sumP = 0;
-let dealer = [];
-let mode = "main";
-let state = "ready";
-let betPoint = 0;
+/**뽑을 수 있는 카드 */   let cardList = [...list];
+/**버린 카드 */          let discards = [];
+/**플레이어 덱 */        let player = [];
+/**플레이어 숫자 합 */    let sumP = 0;
+/**딜러 덱 */            let dealer = [];
+/**"main" | 게임 이름 */ let mode = "main";
+/**ready | ended */     let state = "ready";
+/**베팅한 포인트 */       let betPoint = 0;
 
 addPoint(0);
 
@@ -60,6 +60,10 @@ function end() {
     state = "ended";
 }
 
+/**
+ * 베팅 및 게임 시작
+ * @param {string} point 
+ */
 function bet(point) {
     betPoint = Number(point);
     if (Number(localStorage.currentPoint) < betPoint) {
@@ -92,15 +96,24 @@ function bet(point) {
                 //이미 betPoint * 2를 얻었기 때문에 0.5배만 얻음
                 document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
             }
+        case "onecard":
+            document.getElementById("oc_draw").style.display = "inline-block";
+            document.getElementById("oc_bet").style.display = "none";
+            document.getElementById("oc_betpoint").style.display = "none";
     }
     
 }
 
+/**
+ * 카드 뽑는 함수
+ * @param {string[]} array 덱
+ */
 function draw(array) {
     if (state === "ended") return;
     if (cardList.length === 0) {
         cardList = [...discards];
-        discards = [];
+        discards = [cardList[cardList.length - 2], cardList[cardList.length - 1]];
+        cardList.splice(-2);
     }
     let n = Math.floor(Math.random() * cardList.length);
     array.push(cardList[n]);
@@ -114,6 +127,10 @@ function draw(array) {
     }
 }
 
+/**
+ * 플레이어 포인트 보충(메인 화면에서 사용)
+ * @param {string} point 
+ */
 function addPoint(point) {
     point = Number(point);
     if (point < 0) {
@@ -143,6 +160,12 @@ function addPoint(point) {
     }
 }
 
+/**
+ * 블랙잭 게임 시 draw 함수에 의해 실행.
+ * @param {string[]} array 덱
+ * @param {string} arrayName 덱 주인
+ * @param {string} card 
+ */
 function blackjack(array, arrayName, card) {
     switch (card[card.length - 1]) {
         case "♦":
@@ -198,7 +221,11 @@ function blackjack(array, arrayName, card) {
     return [num, sum];
 }
 
-function numChange(n) { //로마자 카드 숫자로 바꾸는 것.
+/**
+ * 카드 숫자 추출 함수
+ * @param {string} n 카드 ex) "A♠"
+ */
+function numChange(n) {
     switch (mode) {
         case "blackjack":
             switch (n[0]) {
