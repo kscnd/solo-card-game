@@ -33,8 +33,8 @@
 
         <input id="bj_betpoint" class="smallbox" type="number"> <br>
         <div id="bj_bet" class="button" onclick="bet(bj_betpoint.value)">게임 시작</div>
-        <div id="bj_draw" class="button" onclick="draw(player)">hit</div>
-        <div id="bj_stop" class="button" onclick="draw(dealer)">stay</div>
+        <div id="bj_draw" class="button" onclick="draw(player, 'player')">hit</div>
+        <div id="bj_stop" class="button" onclick="draw(dealer, 'dealer')">stay</div>
         <div id="bj_newgame" class="button" onclick="reset()">new game</div>
         <br>
 
@@ -83,13 +83,14 @@
         <div class="button" onclick="modeChange('main')">초기 화면으로</div> <br>
         <div id="oc_dealer" class="cardbox"></div> <br>
         <div id="oc_textbox" class="box"></div> <br>
-        <div id="oc_discard" class="cardbox"></div> <br>
-        <div id="oc_discard2" class="cardbox"></div> <br>
+        <div id="oc_discard" class="cardbox" style="background-color: #DCDCDC"></div>
+        <div id="oc_suit" class="smallbox"></div> <br>
+        <div id="oc_discard2" class="cardbox" style="background-color: #C0C0C0"></div> <br>
         <div id="oc_player" class="cardbox"></div> <br>
 
         <input id="oc_betpoint" class="smallbox" type="number"> <br>
-        <div id="oc_bet" class="button" onclick="bet(1)">게임 시작</div>
-        <div id="oc_draw" class="button" onclick="draw(player)">draw</div>
+        <div id="oc_bet" class="button" onclick="bet(0)">게임 시작</div>
+        <div id="oc_draw" class="button" onclick="draw(player, 'player')">draw</div>
         <div id="oc_newgame" class="button" onclick="reset()">new game</div>
         <br>
     </div>
