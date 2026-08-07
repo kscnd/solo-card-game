@@ -8,8 +8,9 @@ const list = ["A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9
 /**플레이어 숫자 합 */    let sumP = 0;
 /**딜러 덱 */            let dealer = [];
 /**"main" | 게임 이름 */ let mode = "main";
-/**ready | ended */     let state = "ready";
+/**ready | setting | ended */     let state = "ready";
 /**베팅한 포인트 */       let betPoint = 0;
+/**dealer | player */   let turn = "player";
 
 addPoint(0);
 
@@ -102,6 +103,7 @@ function bet(point) {
             }
             break;
         case "onecard":
+            state = "setting";
             document.getElementById("oc_draw").style.display = "inline-block";
             document.getElementById("oc_bet").style.display = "none";
             document.getElementById("oc_betpoint").style.display = "none";
@@ -114,6 +116,7 @@ function bet(point) {
                 draw(player, 'player');
                 draw(dealer, 'dealer');
             }
+            state = "ready";
             break;
     }
     
@@ -126,6 +129,7 @@ function bet(point) {
  */
 function draw(array, arrayName) {
     if (state === "ended") return;
+    if (state === "ready" && turn !== arrayName) return;
     if (cardList.length === 0) {
         cardList = [...discards];
         discards = [cardList[cardList.length - 2], cardList[cardList.length - 1]];
@@ -283,15 +287,18 @@ function displaycard(card) {
 }
 
 const oc = {
+    isAttacking: false,
     /**
      * 카드 버리는 함수
      * @param {string} card 버리는 카드
      * @param {string} arrayName 덱 주인
      */
     discard(card, arrayName) {
+        if (arrayName !== turn) return;
+        if (discards.indexOf(card) + 1) return; 
         const lastCard = document.getElementById("oc_discard").innerText;
         let suit = document.getElementById("oc_suit");
-        if (lastCard[0] !== card[0] && suit.innerText !== card[card.length - 1]) return;
+        if (this.checkAvailable([card])[0] === false) return;
         document.getElementById(`oc_discard2`).innerHTML = displaycard(lastCard);
         document.getElementById("oc_discard").innerHTML = displaycard(card);
         discards.push(card);
@@ -300,6 +307,54 @@ const oc = {
             let newElements = document.getElementById("oc_player").innerHTML.replace(displaycard(card), "");
             document.getElementById("oc_player").innerHTML = newElements;
             player.splice(player.indexOf(card), 1);
+            if (card[0] !== "K" && card[0] !== "J") {
+                this.dealerAct();
+            }
+        } else if (arrayName === "dealer") {
+            let newElements = document.getElementById("oc_dealer").innerHTML.replace(displaycard(""), "");
+            document.getElementById("oc_dealer").innerHTML = newElements;
+            dealer.splice(dealer.indexOf(card), 1);
+            if (card[0] !== "K" && card[0] !== "J") turn = "player";
+            else this.dealerAct();
         }
-    } 
+    },
+    /**
+     * 덱에 낼 수 있는게 있는지 체크
+     * @param {string[]} array 단일 카드면 배열로 감싸야 함
+     * @returns {boolean[]}
+     */
+    checkAvailable(array) {
+        const lastCard = document.getElementById("oc_discard").innerText;
+        let suit = document.getElementById("oc_suit");
+        let b = -1;
+        let barray = [];
+        for (let i = 0; i < array.length; i++) {
+            barray.push(b);
+            b = false;
+            if (lastCard[0] !== array[i][0] && suit.innerText !== array[i][array[i].length - 1]) continue;
+            if (isAttacking) {
+                if (lastCard[0] === "A") {
+                    if (lastCard[1] === "♠") continue;
+                    if (array[i][0] !== "A") continue;
+                }
+                if (lastCard[0] === "2") {
+                    if (array[i][0] !== "2" && array[i][0] !== "A") continue;
+                }
+            }
+            b = true;
+        }
+        barray.push(b);
+        barray = barray.slice(1);
+        return barray;
+    },
+    dealerAct() {
+        turn = "dealer";
+        c = this.checkAvailable(dealer).indexOf(true);
+        if (c === -1) {
+            setTimeout(() => {
+                draw(dealer, "dealer");
+                turn = "player";
+            }, 1000);
+        } else setTimeout(() => {this.discard(dealer[c], "dealer")}, 1000);
+    }
 } 
