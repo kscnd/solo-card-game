@@ -34,7 +34,7 @@
         <input id="bj_betpoint" class="smallbox" type="number"> <br>
         <div id="bj_bet" class="button" onclick="bet(bj_betpoint.value)">게임 시작</div>
         <div id="bj_draw" class="button" onclick="draw(player, 'player')">hit</div>
-        <div id="bj_stop" class="button" onclick="draw(dealer, 'dealer')">stay</div>
+        <div id="bj_stop" class="button" onclick="turn = 'dealer'; draw(dealer, 'dealer')">stay</div>
         <div id="bj_newgame" class="button" onclick="reset()">new game</div>
         <br>
 
@@ -90,7 +90,7 @@
 
         <input id="oc_betpoint" class="smallbox" type="number"> <br>
         <div id="oc_bet" class="button" onclick="bet(0)">게임 시작</div>
-        <div id="oc_draw" class="button" onclick="if (turn === 'player' && state === 'ready') {draw(player, 'player'); oc.dealerAct()}">draw</div>
+        <div id="oc_draw" class="button" onclick="if (turn === 'player' && state === 'ready') {draw(player, 'player'); setTimeout(() => {oc.dealerAct()}, oc.damage * 500)}">draw</div>
         <div id="oc_newgame" class="button" onclick="reset()">new game</div>
         <br>
     </div>
@@ -105,8 +105,13 @@
         <p>게임을 다시 시작하기 위해 초기화하는 버튼입니다.</p>
         <h2>게임의 종료</h2>
         <p></p>
-        <h2>기타</h2>
-        <p></p>
+        <h2>미구현 기능 / 할 일 목록</h2>
+        <p>
+            7카드 특수능력 <br>
+            더 나은 dealer 행동 <br>
+            UI 개편 <br>
+            가이드 추가
+        </p>
         <div class="button" onclick="modeChange('onecard')">돌아가기</div>
     </div>
     <script src="script.js"></script>

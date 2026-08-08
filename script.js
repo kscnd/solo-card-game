@@ -26,6 +26,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
     cardList = [...list];
     discards = [];
     state = "ready";
+    turn = "player";
     sumP = 0;
 
     document.getElementById("dealer").innerText = "";
@@ -46,12 +47,19 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
             document.getElementById("oc_bet").style.display = "inline-block";
             document.getElementById("oc_draw").style.display = "none";
             document.getElementById("oc_newgame").style.display = "none";
+            document.getElementById("oc_discard").innerText = "";
+            document.getElementById("oc_suit").innerText = "";
+            document.getElementById("oc_discard2").innerText = "";
+            document.getElementById("oc_dealer").innerText = "";
+            document.getElementById("oc_player").innerText = "";
             oc.isAttacking = false;
+            oc.damage = 0;
             break;
     }
 }
 
 function end() {
+    state = "ended";
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "none";
@@ -61,9 +69,19 @@ function end() {
         case "onecard":
             document.getElementById("oc_draw").style.display = "none";
             document.getElementById("oc_newgame").style.display = "inline-block";
+            if (dealer.length === 0) {
+                document.getElementById("oc_textbox").innerText = "딜러 승리!";
+            } else if (player.length === 0) {
+                document.getElementById("oc_textbox").innerText = "플레이어 승리!";
+            } else if (player.length >= 25) {
+                document.getElementById("oc_textbox").innerText = "플레이어 파산! 딜러 승리!";
+            } else if (dealer.length >= 25) {
+                document.getElementById("oc_textbox").innerText = "딜러 파산! 플레이어 승리!";
+            } else {
+                document.getElementById("oc_textbox").innerText = "ERROR";
+            }
             break;
     }
-    state = "ended";
 }
 
 /**
@@ -150,30 +168,32 @@ function draw(array, arrayName) {
             } else {
                 document.getElementById(`oc_${arrayName}`).innerHTML += displaycard(array[array.length - 1]);
             }
-    }
-    state = "setting";
-    for (let i = 1; i < oc.damage; i++) {
-        setTimeout(() => {
-            if (cardList.length === 0) {
-                cardList = [...discards];
-                discards = [cardList[cardList.length - 2], cardList[cardList.length - 1]];
-                cardList.splice(-2);
+            state = "setting";
+            for (let i = 1; i < oc.damage; i++) {
+                setTimeout(() => {
+                    if (cardList.length === 0) {
+                        cardList = [...discards];
+                        discards = [cardList[cardList.length - 2], cardList[cardList.length - 1]];
+                        cardList.splice(-2);
+                    }
+                    let n = Math.floor(Math.random() * cardList.length);
+                    array.push(cardList[n]);
+                    cardList.splice(n, 1);
+                    if (arrayName === "dealer") {
+                        document.getElementById("oc_dealer").innerHTML += displaycard("");
+                    } else {
+                        document.getElementById(`oc_${arrayName}`).innerHTML += displaycard(array[array.length - 1]);
+                    }
+                }, 500 * i);
             }
-            let n = Math.floor(Math.random() * cardList.length);
-            array.push(cardList[n]);
-            cardList.splice(n, 1);
-            if (arrayName === "dealer") {
-                document.getElementById("oc_dealer").innerHTML += displaycard("");
-            } else {
-                document.getElementById(`oc_${arrayName}`).innerHTML += displaycard(array[array.length - 1]);
-            }
-        }, 500 * i);
+            setTimeout(() => {
+                state = "ready";
+                oc.damage = 0;
+                oc.isAttacking = false;
+                if (array.length >= 25) end();
+            }, 500 * (oc.damage));
+            break;
     }
-    setTimeout(() => {
-        state = "ready";
-        oc.damage = 0;
-        oc.isAttacking = false;
-    }, 500 * (oc.damage));
 }
 
 /**
@@ -319,11 +339,12 @@ const oc = {
      * @param {string} arrayName 덱 주인
      */
     discard(card, arrayName) {
+        if (state !== "ready") return;
         if (arrayName !== turn) return;
         if (discards.indexOf(card) + 1) return; 
+        if (this.checkAvailable([card])[0] === false) return;
         const lastCard = document.getElementById("oc_discard").innerText;
         let suit = document.getElementById("oc_suit");
-        if (this.checkAvailable([card])[0] === false) return;
         document.getElementById(`oc_discard2`).innerHTML = displaycard(lastCard);
         document.getElementById("oc_discard").innerHTML = displaycard(card);
         discards.push(card);
@@ -335,12 +356,22 @@ const oc = {
             if (card[0] !== "K" && card[0] !== "J") {
                 turn = "dealer";
             }
+            if (player.length === 0) {
+                end();
+                return;
+            }
         } else if (arrayName === "dealer") {
             let newElements = document.getElementById("oc_dealer").innerHTML.replace(displaycard(""), "");
             document.getElementById("oc_dealer").innerHTML = newElements;
             dealer.splice(dealer.indexOf(card), 1);
-            if (card[0] !== "K" && card[0] !== "J") turn = "player";
-            else turn = "dealer";
+            if (card[0] !== "K" && card[0] !== "J") {
+                turn = "player";
+                document.getElementById("oc_textbox").innerText = "플레이어 턴";
+            } else turn = "dealer";
+            if (dealer.length === 0) {
+                end();
+                return;
+            }
         }
 
         this.isAttacking = true;
@@ -396,13 +427,15 @@ const oc = {
         return barray;
     },
     dealerAct() {
-        if (state === "setting") return;
+        if (state !== "ready") return;
         turn = "dealer";
+        document.getElementById("oc_textbox").innerText = "딜러 행동 중";
         c = this.checkAvailable(dealer).indexOf(true);
         if (c === -1) {
             setTimeout(() => {
                 draw(dealer, "dealer");
                 turn = "player";
+                document.getElementById("oc_textbox").innerText = "플레이어 턴";
             }, 1000);
         } else setTimeout(() => {this.discard(dealer[c], "dealer")}, 1000);
     }
