@@ -46,6 +46,7 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
             document.getElementById("oc_bet").style.display = "inline-block";
             document.getElementById("oc_draw").style.display = "none";
             document.getElementById("oc_newgame").style.display = "none";
+            oc.isAttacking = false;
             break;
     }
 }
@@ -113,10 +114,10 @@ function bet(point) {
             let lastCard = document.getElementById("oc_discard").innerText
             document.getElementById("oc_suit").innerText = lastCard[lastCard.length - 1];
             for (let i = 0; i < 7; i++) {
+                state = "setting";
                 draw(player, 'player');
                 draw(dealer, 'dealer');
             }
-            state = "ready";
             break;
     }
     
@@ -150,6 +151,29 @@ function draw(array, arrayName) {
                 document.getElementById(`oc_${arrayName}`).innerHTML += displaycard(array[array.length - 1]);
             }
     }
+    state = "setting";
+    for (let i = 1; i < oc.damage; i++) {
+        setTimeout(() => {
+            if (cardList.length === 0) {
+                cardList = [...discards];
+                discards = [cardList[cardList.length - 2], cardList[cardList.length - 1]];
+                cardList.splice(-2);
+            }
+            let n = Math.floor(Math.random() * cardList.length);
+            array.push(cardList[n]);
+            cardList.splice(n, 1);
+            if (arrayName === "dealer") {
+                document.getElementById("oc_dealer").innerHTML += displaycard("");
+            } else {
+                document.getElementById(`oc_${arrayName}`).innerHTML += displaycard(array[array.length - 1]);
+            }
+        }, 500 * i);
+    }
+    setTimeout(() => {
+        state = "ready";
+        oc.damage = 0;
+        oc.isAttacking = false;
+    }, 500 * (oc.damage));
 }
 
 /**
@@ -288,6 +312,7 @@ function displaycard(card) {
 
 const oc = {
     isAttacking: false,
+    /**공격으로 먹는 카드 수 */ damage: 0,
     /**
      * 카드 버리는 함수
      * @param {string} card 버리는 카드
@@ -308,20 +333,43 @@ const oc = {
             document.getElementById("oc_player").innerHTML = newElements;
             player.splice(player.indexOf(card), 1);
             if (card[0] !== "K" && card[0] !== "J") {
-                this.dealerAct();
+                turn = "dealer";
             }
         } else if (arrayName === "dealer") {
             let newElements = document.getElementById("oc_dealer").innerHTML.replace(displaycard(""), "");
             document.getElementById("oc_dealer").innerHTML = newElements;
             dealer.splice(dealer.indexOf(card), 1);
             if (card[0] !== "K" && card[0] !== "J") turn = "player";
-            else this.dealerAct();
+            else turn = "dealer";
         }
+
+        this.isAttacking = true;
+        switch (card) {
+            case "A♠":
+                this.damage += 5;
+                break;
+            case "A♦":
+            case "A♥":
+            case "A♣":
+                this.damage += 3;
+                break;
+            case "2♠":
+            case "2♦":
+            case "2♥":
+            case "2♣":
+                this.damage += 2;
+                break;
+            default:
+                this.isAttacking = false;
+                break;
+        }
+        if (turn === "dealer") this.dealerAct()
     },
     /**
      * 덱에 낼 수 있는게 있는지 체크
      * @param {string[]} array 단일 카드면 배열로 감싸야 함
      * @returns {boolean[]}
+     * true index 반환으로 수정?
      */
     checkAvailable(array) {
         const lastCard = document.getElementById("oc_discard").innerText;
@@ -332,7 +380,7 @@ const oc = {
             barray.push(b);
             b = false;
             if (lastCard[0] !== array[i][0] && suit.innerText !== array[i][array[i].length - 1]) continue;
-            if (isAttacking) {
+            if (this.isAttacking) {
                 if (lastCard[0] === "A") {
                     if (lastCard[1] === "♠") continue;
                     if (array[i][0] !== "A") continue;
@@ -348,6 +396,7 @@ const oc = {
         return barray;
     },
     dealerAct() {
+        if (state === "setting") return;
         turn = "dealer";
         c = this.checkAvailable(dealer).indexOf(true);
         if (c === -1) {

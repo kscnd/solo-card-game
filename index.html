@@ -90,7 +90,7 @@
 
         <input id="oc_betpoint" class="smallbox" type="number"> <br>
         <div id="oc_bet" class="button" onclick="bet(0)">게임 시작</div>
-        <div id="oc_draw" class="button" onclick="if (turn === 'player') {draw(player, 'player'); oc.dealerAct()}">draw</div>
+        <div id="oc_draw" class="button" onclick="if (turn === 'player' && state === 'ready') {draw(player, 'player'); oc.dealerAct()}">draw</div>
         <div id="oc_newgame" class="button" onclick="reset()">new game</div>
         <br>
     </div>
