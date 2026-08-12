@@ -16,6 +16,13 @@ addPoint(0);
 
 function modeChange(input) {
     document.getElementById(mode).style.display = "none";
+    let elements = Array.from(document.getElementsByClassName(mode));
+    elements.forEach((e) => e.style.display = "none");
+
+    elements = Array.from(document.getElementsByClassName(input));
+    elements.forEach((e) => e.style.display = "inline-block");
+    if (input === "main") document.getElementById("tothemain").style.display = "none";
+    else document.getElementById("tothemain").style.display = "inline-block";
     mode = input;
     document.getElementById(mode).style.display = "block";
     reset();
@@ -60,14 +67,17 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
 function end() {
     state = "ended";
+    document.getElementById("tothemain").style.display = "inline-block";
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "none";
             document.getElementById("bj_stop").style.display = "none";
             document.getElementById("bj_newgame").style.display = "inline-block";
+            document.getElementById("bj_guideb").style.display = "inline-block";
             break;
         case "onecard":
             document.getElementById("oc_draw").style.display = "none";
+            document.getElementById("oc_guideb").style.display = "inline-block";
             document.getElementById("oc_newgame").style.display = "inline-block";
             if (dealer.length === 0) {
                 document.getElementById("oc_textbox").innerText = "딜러 승리!";
@@ -104,11 +114,13 @@ function bet(point) {
     }// 예외사항 
     localStorage.currentPoint = Number(localStorage.currentPoint) - betPoint;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
+    document.getElementById("tothemain").style.display = "none";
 
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "inline-block";
             document.getElementById("bj_stop").style.display = "inline-block";
+            document.getElementById("bj_guideb").style.display = "none";
             document.getElementById("bj_bet").style.display = "none";
             document.getElementById("bj_betpoint").style.display = "none";
             document.getElementById("bj_textbox").innerText = `베팅한 포인트: ${betPoint}`
@@ -124,6 +136,7 @@ function bet(point) {
         case "onecard":
             state = "setting";
             document.getElementById("oc_draw").style.display = "inline-block";
+            document.getElementById("oc_guideb").style.display = "none";
             document.getElementById("oc_bet").style.display = "none";
             document.getElementById("oc_betpoint").style.display = "none";
             let array = [];

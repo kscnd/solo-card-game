@@ -1,3 +1,23 @@
+header {
+    position:fixed;
+    background-color:#DEE2E6;
+    top:0px;
+    left:0px;
+    right:0px;
+    padding:20px;
+}
+footer {
+    display:flex;
+    position:fixed;
+    background-color:#DEE2E6;
+    padding:10px 0px 20px 0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+}
+.blank {
+    height:87px;
+}
 .box {
     text-align:center;
     padding:10px 20px;
@@ -8,6 +28,7 @@
     display:inline-block;
 }
 .smallbox {
+    background-color:#F8F9FA;
     font-size:12px;
     padding:5px;
     border:solid;
@@ -36,14 +57,18 @@
 }
 .button {
     text-align:center;
+    font-size:auto;
     background-color:#D3D3DF;
-    height:23.2px;
+    width:29vw;
     padding:10px 20px;
     border:solid;
     border-width:2px;
     border-radius:10px;
-    margin-top:30px;
+    margin-top:10px;
     display:inline-block;
+    margin-left:2vw;
+    margin-right:2vw;
+    box-sizing: border-box; 
 }
 .game {display:none}
 .guide {display:none}
