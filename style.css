@@ -57,9 +57,10 @@ footer {
 }
 .button {
     text-align:center;
-    font-size:auto;
+    font-size:15px;
     background-color:#D3D3DF;
     width:29vw;
+    height:46.4px;
     padding:10px 20px;
     border:solid;
     border-width:2px;

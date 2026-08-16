@@ -12,7 +12,110 @@ const list = ["A♠", "2♠", "3♠", "4♠", "5♠", "6♠", "7♠", "8♠", "9
 /**베팅한 포인트 */       let betPoint = 0;
 /**dealer | player */   let turn = "player";
 
-addPoint(0);
+const oc = {
+    isAttacking: false,
+    /**공격으로 먹는 카드 수 */ damage: 0,
+    /**
+     * 카드 버리는 함수
+     * @param {string} card 버리는 카드
+     * @param {string} arrayName 덱 주인
+     */
+    discard(card, arrayName) {
+        if (state !== "ready") return;
+        if (arrayName !== turn) return;
+        if (discards.indexOf(card) + 1) return; 
+        if (this.checkAvailable([card])[0] === false) return;
+        const lastCard = document.getElementById("oc_discard").innerText;
+        let suit = document.getElementById("oc_suit");
+        if (arrayName === "player") {
+            document.getElementById(card).remove();
+            player.splice(player.indexOf(card), 1);
+            if (card[0] !== "K" && card[0] !== "J") {
+                turn = "dealer";
+            }
+        } else if (arrayName === "dealer") {
+            document.getElementById("oc_dealer").removeChild(document.getElementsByClassName("card")[0]);
+            dealer.splice(dealer.indexOf(card), 1);
+            if (card[0] !== "K" && card[0] !== "J") {
+                turn = "player";
+                document.getElementById("oc_textbox").innerText = "플레이어 턴";
+            } else turn = "dealer";
+        }
+        document.getElementById(`oc_discard2`).innerHTML = displaycard(lastCard);
+        document.getElementById("oc_discard").innerHTML = displaycard(card);
+        discards.push(card);
+        suit.innerText = card[card.length - 1];
+        
+        if (dealer.length === 0 || player.length === 0) {
+            end();
+            return;
+        }
+
+        this.isAttacking = true;
+        switch (card) {
+            case "A♠":
+                this.damage += 5;
+                break;
+            case "A♦":
+            case "A♥":
+            case "A♣":
+                this.damage += 3;
+                break;
+            case "2♠":
+            case "2♦":
+            case "2♥":
+            case "2♣":
+                this.damage += 2;
+                break;
+            default:
+                this.isAttacking = false;
+                break;
+        }
+        if (turn === "dealer") this.dealerAct()
+    },
+    /**
+     * 덱에 낼 수 있는게 있는지 체크
+     * @param {string[]} array 단일 카드면 배열로 감싸야 함
+     * @returns {boolean[]}
+     */
+    checkAvailable(array) {
+        const lastCard = document.getElementById("oc_discard").innerText;
+        let suit = document.getElementById("oc_suit");
+        let b = -1;
+        let barray = [];
+        for (let i = 0; i < array.length; i++) {
+            barray.push(b);
+            b = false;
+            if (lastCard[0] !== array[i][0] && suit.innerText !== array[i][array[i].length - 1]) continue;
+            if (this.isAttacking) {
+                if (lastCard[0] === "A") {
+                    if (lastCard[1] === "♠") continue;
+                    if (array[i][0] !== "A") continue;
+                }
+                if (lastCard[0] === "2") {
+                    if (array[i][0] !== "2" && array[i][0] !== "A") continue;
+                }
+            }
+            b = true;
+        }
+        barray.push(b);
+        barray = barray.slice(1);
+        return barray;
+    },
+    dealerAct() {
+        if (state !== "ready") return;
+        turn = "dealer";
+        document.getElementById("oc_textbox").innerText = "딜러 행동 중";
+        c = this.checkAvailable(dealer).indexOf(true);
+        if (c === -1) {
+            setTimeout(() => {
+                draw(dealer, "dealer");
+                turn = "player";
+                document.getElementById("oc_textbox").innerText = "플레이어 턴";
+            }, 1000);
+        } else setTimeout(() => {this.discard(dealer[c], "dealer")}, 1000);
+    }
+} 
 
 function modeChange(input) {
     document.getElementById(mode).style.display = "none";
@@ -21,8 +124,15 @@ function modeChange(input) {
 
     elements = Array.from(document.getElementsByClassName(input));
     elements.forEach((e) => e.style.display = "inline-block");
-    if (input === "main") document.getElementById("tothemain").style.display = "none";
-    else document.getElementById("tothemain").style.display = "inline-block";
+    if (input === "main") {
+        document.getElementById("tothemain").style.display = "none";
+        document.getElementById("start").style.display = "none";
+        document.getElementById("guide").style.display = "none";
+    } else {
+        document.getElementById("tothemain").style.display = "inline-block";
+        document.getElementById("start").style.display = "inline-block";
+        document.getElementById("guide").style.display = "inline-block";
+    }
     mode = input;
     document.getElementById(mode).style.display = "block";
     reset();
@@ -38,22 +148,21 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 
     document.getElementById("dealer").innerText = "";
     document.getElementById("player").innerText = "";
+    document.getElementById("newgame").style.display = "none";
     
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_textbox").innerText = "베팅할 포인트를 입력하세요";
             document.getElementById("bj_betpoint").style.display = "inline-block";
-            document.getElementById("bj_bet").style.display = "inline-block";
+            document.getElementById("start").style.display = "inline-block";
             document.getElementById("bj_draw").style.display = "none";
             document.getElementById("bj_stop").style.display = "none";
-            document.getElementById("bj_newgame").style.display = "none";
             break;
         case "onecard":
             document.getElementById("oc_textbox").innerText = "플레이 방법을 꼭 읽어주세요!";
             document.getElementById("oc_betpoint").style.display = "inline-block";
-            document.getElementById("oc_bet").style.display = "inline-block";
+            document.getElementById("start").style.display = "inline-block";
             document.getElementById("oc_draw").style.display = "none";
-            document.getElementById("oc_newgame").style.display = "none";
             document.getElementById("oc_discard").innerText = "";
             document.getElementById("oc_suit").innerText = "";
             document.getElementById("oc_discard2").innerText = "";
@@ -68,17 +177,15 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
 function end() {
     state = "ended";
     document.getElementById("tothemain").style.display = "inline-block";
+    document.getElementById("guide").style.display = "inline-block";
+    document.getElementById("newgame").style.display = "inline-block";
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "none";
             document.getElementById("bj_stop").style.display = "none";
-            document.getElementById("bj_newgame").style.display = "inline-block";
-            document.getElementById("bj_guideb").style.display = "inline-block";
             break;
         case "onecard":
             document.getElementById("oc_draw").style.display = "none";
-            document.getElementById("oc_guideb").style.display = "inline-block";
-            document.getElementById("oc_newgame").style.display = "inline-block";
             if (dealer.length === 0) {
                 document.getElementById("oc_textbox").innerText = "딜러 승리!";
             } else if (player.length === 0) {
@@ -115,13 +222,13 @@ function bet(point) {
     localStorage.currentPoint = Number(localStorage.currentPoint) - betPoint;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
     document.getElementById("tothemain").style.display = "none";
+    document.getElementById("start").style.display = "none";
+    document.getElementById("guide").style.display = "none";
 
     switch (mode) {
         case "blackjack":
             document.getElementById("bj_draw").style.display = "inline-block";
             document.getElementById("bj_stop").style.display = "inline-block";
-            document.getElementById("bj_guideb").style.display = "none";
-            document.getElementById("bj_bet").style.display = "none";
             document.getElementById("bj_betpoint").style.display = "none";
             document.getElementById("bj_textbox").innerText = `베팅한 포인트: ${betPoint}`
             draw(player, "player");
@@ -136,8 +243,6 @@ function bet(point) {
         case "onecard":
             state = "setting";
             document.getElementById("oc_draw").style.display = "inline-block";
-            document.getElementById("oc_guideb").style.display = "none";
-            document.getElementById("oc_bet").style.display = "none";
             document.getElementById("oc_betpoint").style.display = "none";
             let array = [];
             draw(array, 'discard');
@@ -158,7 +263,7 @@ function bet(point) {
  * 카드 뽑는 함수
  * @param {string[]} array 덱
  * @param {string} arrayName 덱 주인
- */
+*/
 function draw(array, arrayName) {
     if (state === "ended") return;
     if (state === "ready" && turn !== arrayName) return;
@@ -234,7 +339,7 @@ function addPoint(point) {
     } else {
         localStorage.currentPoint = Number(localStorage.currentPoint) + point;
     } //localStorage에 변경사항 저장
-
+    
     document.getElementById("addedPoint").innerText = `추가한 포인트: ${localStorage.addedPoint}`;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
     if (point > 0) {
@@ -297,21 +402,21 @@ function blackjack(array, arrayName, card) {
 
 /**
  * 카드 숫자 추출 함수
- * @param {string} n 카드 ex) "A♠"
- */
-function numChange(n) {
+ * @param {string} card 카드 ex) "A♠"
+*/
+function numChange(card) {
     switch (mode) {
         case "blackjack":
-            switch (n[0]) {
+            switch (card[0]) {
                 case "A":
                     return 11;
                 case "1":
                 case "J":
                 case "Q":
-                case "K":
+                    case "K":
                     return 10;
                 default:
-                    return Number(n[0]);
+                    return Number(card[0]);
             }
     }
 }
@@ -332,124 +437,59 @@ function displaycard(card) {
                 default:
                     return `<div class="card">${card}</div>`
             }
-        case "onecard":
+            case "onecard":
             switch (card[card.length - 1]) {
                 case "♦":
                 case "♥":
-                    return `<div class="card" style="color: red" onclick="oc.discard('${card}', 'player')">${card}</div>`;
+                    return `<div class="card" id="${card}" style="color: red" onclick="oc.discard('${card}', 'player')">${card}</div>`;
                 default:
-                    return `<div class="card" onclick="oc.discard('${card}', 'player')">${card}</div>`
+                    return `<div class="card" id="${card}" onclick="oc.discard('${card}', 'player')">${card}</div>`
             }
     }
 }
 
-const oc = {
-    isAttacking: false,
-    /**공격으로 먹는 카드 수 */ damage: 0,
-    /**
-     * 카드 버리는 함수
-     * @param {string} card 버리는 카드
-     * @param {string} arrayName 덱 주인
-     */
-    discard(card, arrayName) {
-        if (state !== "ready") return;
-        if (arrayName !== turn) return;
-        if (discards.indexOf(card) + 1) return; 
-        if (this.checkAvailable([card])[0] === false) return;
-        const lastCard = document.getElementById("oc_discard").innerText;
-        let suit = document.getElementById("oc_suit");
-        document.getElementById(`oc_discard2`).innerHTML = displaycard(lastCard);
-        document.getElementById("oc_discard").innerHTML = displaycard(card);
-        discards.push(card);
-        suit.innerText = card[card.length - 1];
-        if (arrayName === "player") {
-            let newElements = document.getElementById("oc_player").innerHTML.replace(displaycard(card), "");
-            document.getElementById("oc_player").innerHTML = newElements;
-            player.splice(player.indexOf(card), 1);
-            if (card[0] !== "K" && card[0] !== "J") {
-                turn = "dealer";
-            }
-            if (player.length === 0) {
-                end();
-                return;
-            }
-        } else if (arrayName === "dealer") {
-            let newElements = document.getElementById("oc_dealer").innerHTML.replace(displaycard(""), "");
-            document.getElementById("oc_dealer").innerHTML = newElements;
-            dealer.splice(dealer.indexOf(card), 1);
-            if (card[0] !== "K" && card[0] !== "J") {
-                turn = "player";
-                document.getElementById("oc_textbox").innerText = "플레이어 턴";
-            } else turn = "dealer";
-            if (dealer.length === 0) {
-                end();
-                return;
-            }
-        }
 
-        this.isAttacking = true;
-        switch (card) {
-            case "A♠":
-                this.damage += 5;
-                break;
-            case "A♦":
-            case "A♥":
-            case "A♣":
-                this.damage += 3;
-                break;
-            case "2♠":
-            case "2♦":
-            case "2♥":
-            case "2♣":
-                this.damage += 2;
-                break;
-            default:
-                this.isAttacking = false;
-                break;
-        }
-        if (turn === "dealer") this.dealerAct()
-    },
-    /**
-     * 덱에 낼 수 있는게 있는지 체크
-     * @param {string[]} array 단일 카드면 배열로 감싸야 함
-     * @returns {boolean[]}
-     * true index 반환으로 수정?
-     */
-    checkAvailable(array) {
-        const lastCard = document.getElementById("oc_discard").innerText;
-        let suit = document.getElementById("oc_suit");
-        let b = -1;
-        let barray = [];
-        for (let i = 0; i < array.length; i++) {
-            barray.push(b);
-            b = false;
-            if (lastCard[0] !== array[i][0] && suit.innerText !== array[i][array[i].length - 1]) continue;
-            if (this.isAttacking) {
-                if (lastCard[0] === "A") {
-                    if (lastCard[1] === "♠") continue;
-                    if (array[i][0] !== "A") continue;
-                }
-                if (lastCard[0] === "2") {
-                    if (array[i][0] !== "2" && array[i][0] !== "A") continue;
-                }
-            }
-            b = true;
-        }
-        barray.push(b);
-        barray = barray.slice(1);
-        return barray;
-    },
-    dealerAct() {
-        if (state !== "ready") return;
-        turn = "dealer";
-        document.getElementById("oc_textbox").innerText = "딜러 행동 중";
-        c = this.checkAvailable(dealer).indexOf(true);
-        if (c === -1) {
-            setTimeout(() => {
-                draw(dealer, "dealer");
-                turn = "player";
-                document.getElementById("oc_textbox").innerText = "플레이어 턴";
-            }, 1000);
-        } else setTimeout(() => {this.discard(dealer[c], "dealer")}, 1000);
+
+addPoint(0);
+
+document.getElementById("toBlackjack").addEventListener("click", () => modeChange("blackjack"));
+document.getElementById("toOnecard").addEventListener("click", () => modeChange("onecard"));
+document.getElementById("tothemain").addEventListener("click", () => modeChange("main"));
+
+document.getElementById("bj_stop").addEventListener("click", () => {
+    turn = "dealer";
+    draw(dealer, "dealer");
+})
+document.getElementById("bj_draw").addEventListener("click", () => draw(player, 'player'));
+
+document.getElementById("oc_draw").addEventListener("click", () => {
+    if (turn === 'player' && state === 'ready') {
+        draw(player, 'player'); 
+        setTimeout(() => {oc.dealerAct()}, oc.damage * 500)
     }
-} 
+})
+
+document.getElementById("newgame").addEventListener("click", () => reset());
+document.getElementById("start").addEventListener("click", () => {
+    let point;
+    switch (mode) {
+        case "blackjack":
+            point = document.getElementById("bj_betpoint").value;
+            break;
+        case "onecard":
+            point = 0;
+            break;
+    }
+    bet(point);
+})
+document.getElementById("guide").addEventListener("click", () => {
+    switch (mode) {
+        case "blackjack":
+            modeChange("bj_guide");
+            break;
+        case "onecard":
+            modeChange("oc_guide");
+            break;
+    }
+    document.getElementById("guide").style.display = "none";
+})
