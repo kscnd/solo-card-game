@@ -119,16 +119,16 @@ const oc = {
 
 function modeChange(input) {
     document.getElementById(mode).style.display = "none";
-    let elements = Array.from(document.getElementsByClassName(mode));
+    let elements = [...document.getElementsByClassName(mode)];
     elements.forEach((e) => e.style.display = "none");
 
-    elements = Array.from(document.getElementsByClassName(input));
+    elements = [...document.getElementsByClassName(input)];
     elements.forEach((e) => e.style.display = "inline-block");
     if (input === "main") {
-        Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "none");
+        [...document.getElementsByClassName("game")].forEach((a) => a.style.display = "none");
         document.getElementById("turnback").style.display = "none";
     } else {
-        Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "inline-block");
+        [...document.getElementsByClassName("game")].forEach((a) => a.style.display = "inline-block");
     }
     mode = input;
     document.getElementById(mode).style.display = "block";
@@ -160,9 +160,9 @@ function reset() { //게임 끝난 후 모드 변경 없이 리셋 때 필요
             document.getElementById("oc_betpoint").style.display = "inline-block";
             document.getElementById("start").style.display = "inline-block";
             document.getElementById("oc_draw").style.display = "none";
-            document.getElementById("oc_discard").innerText = "";
+            document.getElementById("oc_discard").innerHTML = "<div class=\"card\"></div>";
             document.getElementById("oc_suit").innerText = "";
-            document.getElementById("oc_discard2").innerText = "";
+            document.getElementById("oc_discard2").innerHTML = "<div class=\"card\"></div>";
             document.getElementById("oc_dealer").innerText = "";
             document.getElementById("oc_player").innerText = "";
             oc.isAttacking = false;
@@ -218,7 +218,7 @@ function bet(point) {
     }// 예외사항 
     localStorage.currentPoint = Number(localStorage.currentPoint) - betPoint;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
-    Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "none");
+    [...document.getElementsByClassName("game")].forEach((a) => a.style.display = "none");
 
     switch (mode) {
         case "blackjack":
@@ -240,6 +240,7 @@ function bet(point) {
             document.getElementById("oc_draw").style.display = "inline-block";
             document.getElementById("oc_betpoint").style.display = "none";
             let array = [];
+            document.getElementById("oc_discard").innerHTML = "";
             draw(array, 'discard');
             discards.push(document.getElementById("oc_discard").innerText);
             let lastCard = document.getElementById("oc_discard").innerText

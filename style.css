@@ -5,6 +5,7 @@ header {
     left:0px;
     right:0px;
     padding:20px;
+    z-index:3;
 }
 footer {
     display:flex;
@@ -14,6 +15,7 @@ footer {
     left:0px;
     right:0px;
     bottom:0px;
+    z-index:3;
 }
 .box {
     text-align:center;
@@ -69,4 +71,34 @@ footer {
     box-sizing: border-box; 
 }
 .guide {display:none}
+#oc_discards {
+    position:relative;
+    height:180px;
+    margin-top:20px;
+}
+#oc_discard {
+    background-color: #DCDCDC;
+    position:absolute;
+    top:50px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top:0px;
+    z-index:1;
+}
+#oc_discard2 {
+    background-color:#C0C0C0;
+    position:absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top:0px;
+}
+#oc_discard2 > .card {
+    padding-top:10px;
+    padding-bottom:54px;
+}
+#oc_suit {
+    position:absolute;
+    top:50px;
+    left:calc(50vw + 50px);
+}
 #main {display:block;}
