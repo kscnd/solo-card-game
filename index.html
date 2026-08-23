@@ -11,21 +11,30 @@
         <div id="addedPoint" class="smallbox">추가한 포인트: 0</div>
         <div id="currentPoint" class="smallbox">현재 포인트: 0</div>
     </header>
-    <div class="blank"></div>
+    <div style="height:68.4px"></div>
     <div id="main">
+        <h1>solo-card-game</h1>
         <p>
             혼자 하는 여러가지 카드 게임 사이트이며 개발중입니다.<br>
-            위 게임들에 대한 설명은 각 게임 내에 있습니다.<br>
+            각 게임들에 대한 설명은 각 게임 내에 있습니다.<br>
             아래에서 포인트를 받아 베팅을 할 수 있습니다.<br>
-            개발 중이라 베팅과 같은 특정 기능이 없을 수 있습니다.<br>
         </p>
+        <h2>작업 예정</h2>
+        <ul>
+            <li>UI 개선</li>
+            <li>원카드) 7카드 특수능력</li>
+            <li>원카드) 베팅</li>
+            <li>원카드) 더 나은 딜러 행동</li>
+        </ul>
+        <hr>
+        <h2>포인트 추가</h2>
         <input id="point_value" class="smallbox" type="number" pattern="\d*"> <br>
         <div id="point_add" class="button" onclick="addPoint(point_value.value)" style="width:35vw">포인트 추가</div> <br>
         <div id="point_textbox" class="box"></div>
     </div>
 
 
-    <div id="blackjack" class="game">
+    <div id="blackjack" style="display:none">
         <div id="dealer" class="cardbox"></div> <br>
         <div id="bj_textbox" class="box"></div> <br>
         <div id="player" class="cardbox"></div> <br>
@@ -70,10 +79,9 @@
             카드를 뽑다가 21을 초과하는 경우를 버스트라 부릅니다.<br>
             첫 두장으로 21에 도달한 경우를 블랙잭이라 부르며 베팅한 포인트의 1.5배를 얻습니다.
         </p>
-        <div class="button" onclick="modeChange('blackjack')">돌아가기</div>
     </div>
 
-    <div id="onecard" class="game">
+    <div id="onecard" style="display:none">
         <div id="oc_dealer" class="cardbox"></div> <br>
         <div id="oc_textbox" class="box"></div> <br>
         <div id="oc_discard" class="cardbox" style="background-color: #DCDCDC"></div>
@@ -87,38 +95,71 @@
     
     <div id="oc_guide" class="guide">
         <h1>원카드 가이드</h1>
-        <p>이 모드는 아직 완성되지 않았으며, 가이드 또한 마찬가지입니다!</p>
+        <p>
+            원카드는 딜러보다 먼저 손에 든 카드를 모두 버리면 이기는 게임입니다.<br>
+            이전 카드와 문양이나 숫자가 같은 카드를 클릭해 버릴 수 있습니다.<br>
+            위쪽 칸이 딜러 카드 목록, 아래쪽 칸이 플레이어 카드 목록입니다.<br>
+            버려진 카드 중 연한 색이 가장 최근에 버린 카드, 진한 색이 그 이전에 버린 카드입니다.<br>
+        </p>
+        <h2>카드별 능력</h2>
+        <div class="card">2♠</div>
+        <div class="card" style="color: red">2♦</div>
+        <div class="card" style="color: red">2♥</div>
+        <div class="card">2♣</div>
+        <p>
+            상대방이 2장을 뽑도록 합니다.<br>
+            2나 A로만 방어할 수 있으며 이때 뽑아야 하는 카드 수는 중첩됩니다.<br>
+        </p>
+        <div class="card" style="color: red">A♦</div>
+        <div class="card" style="color: red">A♥</div>
+        <div class="card">A♣</div>
+        <p>
+            상대방이 3장을 뽑도록 합니다.<br>
+            A로만 방어할 수 있으며 역시 중첩됩니다.<br>
+        </p>
+        <div class="card">A♠</div>
+        <p>
+            상대방이 5장을 뽑도록 합니다.<br>
+            방어가 불가능합니다.<br>
+        </p>
+        <div class="card">K♠</div>
+        <div class="card" style="color: red">K♦</div>
+        <div class="card" style="color: red">K♥</div>
+        <div class="card">K♣</div> <br>
+        <div class="card">J♠</div>
+        <div class="card" style="color: red">J♦</div>
+        <div class="card" style="color: red">J♥</div>
+        <div class="card">J♣</div>
+        <p>턴을 넘기지 않습니다.</p>
         <h2>버튼별 설명</h2>
         <div class="button">draw</div>
         <p>카드를 받는 버튼입니다.</p>
-        <div class="button">new game</div>
+        <div class="button">초기화</div>
         <p>게임을 다시 시작하기 위해 초기화하는 버튼입니다.</p>
         <h2>게임의 종료</h2>
-        <p></p>
-        <h2>미구현 기능 / 할 일 목록</h2>
+        <p>손에 있는 카드를 모두 비운 사람이 승리합니다.</p>
         <p>
-            7카드 특수능력 <br>
-            더 나은 dealer 행동 <br>
-            UI 개편 <br>
-            가이드 추가
+            만약 손에 있는 카드가 25장 이상이라면 즉시 패배합니다.<br>
+            이는 뽑을 수 있는 카드가 없어 진행이 안되는 상황을 방지하기 위한 것입니다.
         </p>
-        <div class="button" onclick="modeChange('onecard')">돌아가기</div>
     </div>
-    <div class="blank"></div>
+    <div style="height:86.4px"></div>
     <footer>
         <div id="toBlackjack" class="button main">불랙잭</div>
         <div id="toOnecard" class="button main">원카드</div>
         
-        <div id="tothemain" class="button" style="display:none">초기 화면</div>
+        <div id="tothemain" class="button game" style="display:none">초기 화면</div>
         
         <div id="bj_stop" class="button blackjack" style="display:none; margin-left:15vw">stay</div>
         <div id="bj_draw" class="button blackjack" style="display:none; margin-left:10vw">hit</div>
 
         <div id="oc_draw" class="button onecard" style="display:none; margin-left:35vw">draw</div>
 
-        <div id="start" class="button" style="display:none">게임 시작</div>
+        <div id="start" class="button game" style="display:none">게임 시작</div>
         <div id="newgame" class="button" style="display:none">초기화</div>
-        <div id="guide" class="button" style="display:none">게임 방법</div>
+        <div id="guide" class="button game" style="display:none">게임 방법</div>
+
+        <div id="turnback" class="button" style="display:none">돌아가기</div>
     </footer>
     <script src="script.js"></script>
 </body>

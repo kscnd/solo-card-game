@@ -125,13 +125,10 @@ function modeChange(input) {
     elements = Array.from(document.getElementsByClassName(input));
     elements.forEach((e) => e.style.display = "inline-block");
     if (input === "main") {
-        document.getElementById("tothemain").style.display = "none";
-        document.getElementById("start").style.display = "none";
-        document.getElementById("guide").style.display = "none";
+        Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "none");
+        document.getElementById("turnback").style.display = "none";
     } else {
-        document.getElementById("tothemain").style.display = "inline-block";
-        document.getElementById("start").style.display = "inline-block";
-        document.getElementById("guide").style.display = "inline-block";
+        Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "inline-block");
     }
     mode = input;
     document.getElementById(mode).style.display = "block";
@@ -221,9 +218,7 @@ function bet(point) {
     }// 예외사항 
     localStorage.currentPoint = Number(localStorage.currentPoint) - betPoint;
     document.getElementById("currentPoint").innerText = `현재 포인트: ${localStorage.currentPoint}`;
-    document.getElementById("tothemain").style.display = "none";
-    document.getElementById("start").style.display = "none";
-    document.getElementById("guide").style.display = "none";
+    Array.from(document.getElementsByClassName("game")).forEach((a) => a.style.display = "none");
 
     switch (mode) {
         case "blackjack":
@@ -491,5 +486,18 @@ document.getElementById("guide").addEventListener("click", () => {
             modeChange("oc_guide");
             break;
     }
+    document.getElementById("start").style.display = "none";
     document.getElementById("guide").style.display = "none";
+    document.getElementById("turnback").style.display = "inline-block";
+})
+document.getElementById("turnback").addEventListener("click", () => {
+    switch (mode) {
+        case "bj_guide":
+            modeChange("blackjack");
+            break;
+        case "oc_guide":
+            modeChange("onecard");
+            break;
+    }
+    document.getElementById("turnback").style.display = "none";
 })
